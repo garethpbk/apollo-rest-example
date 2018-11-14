@@ -1,0 +1,25 @@
+mutation CREATE_USER {
+  createUser(input: $input) @rest(type: "User", path: "/users", method: "POST") {
+    id
+    name
+    username
+    email
+    #   address @type(name: "Address") {
+    #     street
+    #     suite
+    #     city
+    #     zipcode
+    #     geo @type(name: "Geo") {
+    #       lat
+    #       lng
+    #     }
+    #   }
+    #   phone
+    #   website
+    #   company @type(name: "Company") {
+    #     name
+    #     catchPhrase
+    #     bs
+    #   }
+  }
+}
