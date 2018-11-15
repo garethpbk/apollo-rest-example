@@ -4,22 +4,22 @@ mutation CREATE_USER {
     name
     username
     email
-    #   address @type(name: "Address") {
-    #     street
-    #     suite
-    #     city
-    #     zipcode
-    #     geo @type(name: "Geo") {
-    #       lat
-    #       lng
-    #     }
-    #   }
-    #   phone
-    #   website
-    #   company @type(name: "Company") {
-    #     name
-    #     catchPhrase
-    #     bs
-    #   }
+    address @type(name: "Address") {
+      street
+      suite
+      city
+      zipcode
+      geo @type(name: "Geo") {
+        lat
+        lng
+      }
+    }
+    phone
+    website
+    company @type(name: "Company") {
+      name
+      catchPhrase
+      bs
+    }
   }
 }

@@ -18,6 +18,17 @@ const CreateUser = ({ createUser, createNewUser, state, handleChange }) => {
     company: { catchPhrase, bs },
   } = state;
 
+  const createViaFetch = async () => {
+    const newUserRequest = await fetch('https://jsonplaceholder.typicode.com/users', {
+      method: 'POST',
+      body: JSON.stringify(state),
+    });
+
+    const response = await newUserRequest.json();
+
+    console.log(response);
+  };
+
   return (
     <form onSubmit={e => createNewUser(e, createUser)}>
       <h3>User Info</h3>
@@ -75,7 +86,8 @@ const CreateUser = ({ createUser, createNewUser, state, handleChange }) => {
       />
       <input type="text" name="bs" placeholder="Company BS" value={bs} onChange={e => handleChange(e, 'company')} />
 
-      <button type="submit">Create New User</button>
+      <button type="submit">Create New User (GraphQL)</button>
+      <button onClick={() => createViaFetch()}>Create New User (Fetch)</button>
     </form>
   );
 };

@@ -1,5 +1,5 @@
 query GET_SINGLE_USER_QUERY($id: ID!) {
-  user(id: $id) @client(type: "User", path: "/users/{args.id}") {
+  user(id: $id) @rest(type: "User", path: "/users/{args.id}") {
     id
     name
     username

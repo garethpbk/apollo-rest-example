@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { RestLink } from 'apollo-link-rest';
-import { ApolloProvider, Query, Mutation } from 'react-apollo';
+import { ApolloProvider, Mutation } from 'react-apollo';
 import { Router, Link } from '@reach/router';
 import { loader } from 'graphql.macro';
 
@@ -20,7 +20,9 @@ const restLink = new RestLink({
 
 const client = new ApolloClient({
   link: restLink,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    dataIdFromObject: object => object.id || null,
+  }),
 });
 
 const GET_USERS_QUERY = loader('../graphql/GET_USERS_QUERY.graphql');

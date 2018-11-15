@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -19,8 +23,22 @@ h1 {
   font-size: 3.5rem;
 }
 
+h1 a {
+  font-size: 3.5rem;
+  color: white;
+  text-decoration: none;
+}
+
+h1 a:hover {
+  text-decoration: underline;
+}
+
 h2 {
   font-size: 2.5rem;
+
+  border-bottom: 1px solid lightblue;
+
+  padding: 0 0 10px 0;
 }
 
 h3 {
@@ -28,7 +46,9 @@ h3 {
 }
 
 p,
-li {
+li,
+a,
+td {
   font-size: 1.6rem;
 }
 
@@ -67,6 +87,7 @@ input {
 }
 
 button {
+  margin: 15px 10px;
   padding: 10px 15px;
 
   background-color: steelblue;
@@ -82,4 +103,18 @@ button {
 
 button:hover {
   background-color: peru;
+}
+
+table {
+  text-align: left;
+}
+
+td {
+  padding: 5px 10px;
+
+  border: 1px solid lightgrey;
+}
+
+td:first-of-type {
+  font-weight: 600;
 }
