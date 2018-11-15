@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { ApolloConsumer } from 'react-apollo';
 import { loader } from 'graphql.macro';
 
