@@ -3,7 +3,7 @@ import { Query } from 'react-apollo';
 import { Link } from '@reach/router';
 import { loader } from 'graphql.macro';
 
-const GET_USERS_QUERY = loader('../graphql/GET_USERS_QUERY.graphql');
+const GET_ALL_USERS_QUERY = loader('../graphql/GET_ALL_USERS_QUERY.graphql');
 
 const AllUsers = () => (
   <>
@@ -12,7 +12,7 @@ const AllUsers = () => (
       <li>
         <em>User Name, User Email, User Id</em>
       </li>
-      <Query query={GET_USERS_QUERY}>
+      <Query query={GET_ALL_USERS_QUERY}>
         {({ data, error, loading }) => {
           if (loading) return <li>Loading...</li>;
 

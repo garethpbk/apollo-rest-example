@@ -25,7 +25,7 @@ const client = new ApolloClient({
   }),
 });
 
-const GET_USERS_QUERY = loader('../graphql/GET_USERS_QUERY.graphql');
+const GET_ALL_USERS_QUERY = loader('../graphql/GET_ALL_USERS_QUERY.graphql');
 const CREATE_USER_MUTATION = loader('../graphql/CREATE_USER_MUTATION.graphql');
 
 class App extends Component {
@@ -50,6 +50,30 @@ class App extends Component {
       catchPhrase: '',
       bs: '',
     },
+  };
+
+  // for demonstration purposes - how would you do this with fetch?
+  componentDidMount() {
+    this.fetchUsers();
+  }
+
+  // you'd get all of the user data, then store it in state
+  fetchUsers = async () => {
+    const allUsers = await fetch('https://jsonplaceholder.typicode.com/users');
+
+    const allUsersJson = await allUsers.json();
+
+    const filteredUsers = allUsersJson.map(user => {
+      const { id, name, email } = user;
+      return { id, name, email };
+    });
+
+    // something like this, if we were using a filteredUsers state property, which would then be mapped to JSX in render()
+    // this.setState({
+    //   filteredUsers
+    // });
+
+    return filteredUsers;
   };
 
   handleChange = (e, nested = null, doubleNested = null) => {
@@ -86,7 +110,7 @@ class App extends Component {
   createNewUser = async (e, action) => {
     e.preventDefault();
 
-    const currentUsers = client.readQuery({ query: GET_USERS_QUERY });
+    const currentUsers = client.readQuery({ query: GET_ALL_USERS_QUERY });
 
     const id = currentUsers.users.length + 1;
 
@@ -135,27 +159,25 @@ class App extends Component {
           <div className="App-container">
             <Router>
               <AllUsers path="/" />
-              <SingleUser path="/:id" />
+              <SingleUser client={client} path="/:id" />
             </Router>
             <div>
               <h2>Add a New User</h2>
               <Mutation
                 mutation={CREATE_USER_MUTATION}
                 update={(cache, { data: { createUser } }) => {
-                  const { users } = cache.readQuery({ query: GET_USERS_QUERY });
-                  cache.writeQuery({ query: GET_USERS_QUERY, data: { users: users.concat([createUser]) } });
+                  const { users } = cache.readQuery({ query: GET_ALL_USERS_QUERY });
+                  cache.writeQuery({ query: GET_ALL_USERS_QUERY, data: { users: users.concat([createUser]) } });
                 }}
               >
-                {(createUser, { data, error, loading }) => {
-                  return (
-                    <CreateUser
-                      createUser={createUser}
-                      createNewUser={this.createNewUser}
-                      state={this.state}
-                      handleChange={this.handleChange}
-                    />
-                  );
-                }}
+                {createUser => (
+                  <CreateUser
+                    createUser={createUser}
+                    createNewUser={this.createNewUser}
+                    state={this.state}
+                    handleChange={this.handleChange}
+                  />
+                )}
               </Mutation>
             </div>
           </div>

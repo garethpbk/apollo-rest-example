@@ -1,4 +1,4 @@
-mutation CREATE_USER {
+mutation CREATE_USER_MUTATION {
   createUser(input: $input) @rest(type: "User", path: "/users", method: "POST") {
     id
     name

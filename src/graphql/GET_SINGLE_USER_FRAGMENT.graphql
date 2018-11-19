@@ -1,4 +1,4 @@
-fragment singleUser on User {
+fragment SingleUser on User {
   id
   name
   username
