@@ -6,4 +6,4 @@ An example project to accompany an article about getting started with GraphQL an
 
 to get going.  Utilizes the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/) for mock data.
 
-Live deployment available at (https://apollo-link-rest-jsonplaceholder.netlify.com/)[https://apollo-link-rest-jsonplaceholder.netlify.com/].
+Live deployment available at [https://apollo-link-rest-jsonplaceholder.netlify.com/](https://apollo-link-rest-jsonplaceholder.netlify.com/).
