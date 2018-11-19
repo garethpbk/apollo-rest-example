@@ -15,6 +15,8 @@ Without further adue, let's take a dive into Apollo Client and see how `apollo-l
 
 The finished repo for this project can be found at [https://github.com/garethpbk/apollo-rest-example](https://github.com/garethpbk/apollo-rest-example).
 
+A live deployment is available at [https://apollo-link-rest-jsonplaceholder.netlify.com/](https://apollo-link-rest-jsonplaceholder.netlify.com/). Note that the Apollo dev tools are disabled by default in production.
+
 ## Creating The Project and Adding Dependencies
 
 The first step is to create a new React App - commands here will use yarn:
@@ -923,3 +925,6 @@ Despite this `apollo-link-rest` is still incredibly useful for a variety of reas
 
 The full repository for this project can be found at:
 [https://github.com/garethpbk/apollo-rest-example](https://github.com/garethpbk/apollo-rest-example)
+
+A live deployment is available at (Apollo dev tools are disabled in production):
+[https://apollo-link-rest-jsonplaceholder.netlify.com/](https://apollo-link-rest-jsonplaceholder.netlify.com/)
