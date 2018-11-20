@@ -79,25 +79,27 @@ It's time to set up Apollo Client and add a REST endpoint, but first we want to 
 4. In _App.js_, remove the logo import. Delete unneeded JSX in the return method, so that you've got something like this:
 
 ```
+
 return (
-    <div className="App">
-        <header className="App-header">
-            <h1>apollo-link-rest + JSONPlaceholder!</h1>
-        </header>
-    </div>
+  <div className="App">
+    <header className="App-header">
+      <h1>apollo-link-rest + JSONPlaceholder!</h1>
+    </header>
+  </div>
 );
 ```
 
 Our project structure should now look like this:
 
 ```
+
 /src
-    /components
-        App.css
-        App.js
-    /graphql
-    index.css
-    index.js
+  /components
+    App.css
+    App.js
+  /graphql
+  index.css
+  index.js
 ```
 
 Go ahead and run `yarn start` to make sure the development server starts. At this point it's a good idea to copy styling from the finished project into _index.css_ and _App.css_ - as this isn't a CSS tutorial we won't be going over that in detail.
@@ -109,6 +111,7 @@ Go ahead and run `yarn start` to make sure the development server starts. At thi
 Great! Let's move on to setting up Apollo Client. Open _App.js_ and add the imports needed to get an instance of Apollo Client running:
 
 ```
+
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { RestLink } from 'apollo-link-rest';
@@ -118,14 +121,16 @@ import { ApolloProvider } from 'react-apollo';
 We now need to create two pieces: 1) a `RestLink` pointing to the REST endpoint and 2) an `ApolloClient` to wrap our application. Use the imports from their respective packages:
 
 ```
+
 const restLink = new RestLink({
-    uri: 'https://jsonplaceholder.typicode.com',
+  uri: 'https://jsonplaceholder.typicode.com',
 });
 ```
 
 This link is passed into an instance of `ApolloClient`, along with a cache from `apollo-cache-inmemory`:
 
 ```
+
 const client = new ApolloClient({
   link: restLink,
   cache: new InMemoryCache({
@@ -139,14 +144,15 @@ We'll return to `dataIdFromObject` later - it allows customization of how object
 The last part of setting up Apollo is to wrap our entire App component with the `<ApolloProvider>` component from `react-apollo`. It takes one prop, client, to which we pass the `ApolloClient` we created. The returned JSX of _App.js_ now looks like:
 
 ```
+
 return (
-    <ApolloProvider client={client}>
-        <div className="App">
-            <header className="App-header">
-                <h1>apollo-link-rest + JSONPlaceholder!</h1>
-            </header>
-        </div>
-    </ApolloProvider>
+  <ApolloProvider client={client}>
+    <div className="App">
+      <header className="App-header">
+        <h1>apollo-link-rest + JSONPlaceholder!</h1>
+      </header>
+    </div>
+  </ApolloProvider>
 );
 ```
 
@@ -165,6 +171,7 @@ Let's create our first query, which will be used to get data for all users from 
 GraphQL queries look kind of like JSON - curly brackets ahoy. In _GET_ALL_USERS_QUERY.graphql_, write the following, and then we'll dig into it:
 
 ```
+
 query GET_ALL_USERS_QUERY {
   users {
     id
@@ -185,11 +192,11 @@ If we were requesting data from a GraphQL server, this query would be all we nee
 
 ```
 query GET_ALL_USERS_QUERY {
-	users @rest(type: "User", path: "/users") {
-		id
-		name
-		email
-	}
+  users @rest(type: "User", path: "/users") {
+    id
+    name
+    email
+  }
 }
 ```
 
@@ -204,23 +211,24 @@ This is the magic of `apollo-link-rest` that allows a GraphQL query to mesh with
 **Sidenote:** think for a minute about how you'd do this with a traditional fetch call - you'd hit the endpoint and get the entire JSON response back, then filter on the client-side to get just the three fields you care about and store them in state. Something like this:
 
 ```
+
 componentDidMount() {
-	this.fetchUsers();
+  this.fetchUsers();
 }
 
 fetchUsers = async () => {
-	const allUsers = await fetch('https://jsonplaceholder.typicode.com/users');
+  const allUsers = await fetch('https://jsonplaceholder.typicode.com/users');
 
-	const allUsersJson = await allUsers.json();
+  const allUsersJson = await allUsers.json();
 
-	const filteredUsers = allUsersJson.map(user => {
-		const { id, name, email } = user;
-		return { id, name, email };
-	});
+  const filteredUsers = allUsersJson.map(user => {
+    const { id, name, email } = user;
+    return { id, name, email };
+  });
 
-	this.setState({
-		filteredUsers
-	});
+  this.setState({
+    filteredUsers
+  });
 };
 ```
 
@@ -229,6 +237,7 @@ Apollo saves us the trouble of all this (more on the topic of client-side filter
 Cool. Next let's actually run this query in React and get the data into the application. Create a new file in **components** called _AllUsers.js_ and import like so:
 
 ```
+
 import React from 'react';
 import { Query } from 'react-apollo';
 import { Link } from '@reach/router';
@@ -244,6 +253,7 @@ Set up a functional component to render an unordered list that will accept data 
 This is one of the coolest parts of Apollo Client - it provides an incredibly easy way to inform your UI what your data is doing with just a little bit of JavaScript. Here's the rest of the `<AllUsers>` component:
 
 ```
+
 const AllUsers = () => (
   <>
     <h2>Current Users</h2>
@@ -255,7 +265,7 @@ const AllUsers = () => (
         {({ data, error, loading }) => {
           if (loading) return <li>Loading...</li>;
 
-          if (error) return <li>{`Error!: ${error}`}</li>;
+          if (error) return <li>{`Error! ${error}`}</li>;
 
           return data.users.map(user => {
             const { name, email, id } = user;
@@ -281,29 +291,31 @@ If the data loads successfully and there are no errors, the data object is made 
 If you're using `graphql-tag` instead of `graphql.macro` - you'll want to `import gql from 'graphql-tag'` and instead of loading the query from a separate file, declare right it in _AllUsers.js_ like so (I like to put it at the bottom, below the export):
 
 ```
+
 const GET_ALL_USERS_QUERY = gql`
-    query GET_ALL_USERS_QUERY {
-	    users @rest(type: "User", path: "/users") {
-		    id
-		    name
-		    email
-	    }
+  query GET_ALL_USERS_QUERY {
+    users @rest(type: "User", path: "/users") {
+      id
+      name
+      email
     }
+  }
 `
 ```
 
 Last we must import _AllUsers.js_ into _App.js_, adding it as a route so that we're prepared to next render individual user components. Add `import { Router, Link } from '@reach/router'` and `import AllUsers from './AllUsers` to _App.js_, then create a `<Router>` component wrapping the `<AllUsers>` component with a path of "/". Link the header to the homepage for convenience. Add in a div with a class of _App-container_ for layout. The component JSX in _App.js_ now looks like:
 
 ```
+
 class App extends Component {
   render() {
     return (
       <ApolloProvider client={client}>
         <div className="App">
           <header className="App-header">
-          	<h1>
-							<Link to="/">apollo-link-rest + JSONPlaceholder!</Link>
-						</h1>
+            <h1>
+              <Link to="/">apollo-link-rest + JSONPlaceholder!</Link>
+            </h1>
           </header>
           <div className="App-container">
             <Router>
@@ -340,6 +352,7 @@ In our project, this means we can use fragments to get data from each individual
 If you looked at the JSONPlaceholder _/users_ endpoint earlier, you'll have seen that there are more fields than the three we've queried so far. Let's add the rest of those fields, and learn how `apollo-link-rest` deals with nested JSON data in the process. Add the following to _GET_ALL_USERS_QUERY.graphql_ (or in the const if you're using `graphql-tag`):
 
 ```
+
 query GET_ALL_USERS_QUERY {
   users @rest(type: "User", path: "/users") {
     id
@@ -376,15 +389,17 @@ Check out the Apollo cache and see how each user entry now has _all_ of its data
 First let's add a route with a parameter to accomodate individual user views:
 
 ```
+
 <Router>
-	<AllUsers path="/" />
-	<SingleUser path="/:id" />
+  <AllUsers path="/" />
+  <SingleUser path="/:id" />
 </Router>
 ```
 
 Create _SingleUser.js_ in **components** and import it into _App.js_, then in the **graphql** directory create _GET_SINGLE_USER_FRAGMENT.graphql_ - we'll write the fragment first:
 
 ```
+
 fragment SingleUser on User {
   id
   name
@@ -419,6 +434,7 @@ Looks pretty similar to the full query, minus a `@rest` directive - the fragment
 Return to _SingleUser.js_ and import the needed packages (remember to import `graphql-tag` and place the fragment in _SingleUser.js_ directly if you're using that instead of the macro):
 
 ```
+
 import React from 'react';
 import { ApolloConsumer } from 'react-apollo';
 import { loader } from 'graphql.macro';
@@ -431,34 +447,36 @@ Something new! `<ApolloConsumer>` is another context-like component that allows 
 Word of warning, there's going to be a lot of code in the `<SingleUser>` component; the bulk of it is JSX for laying out user data. The important bits, where we use `<ApolloConsumer>` to access the client and the fragment to extract data, are less than 10 lines total. Let's set up our consumer:
 
 ```
-const SingleUser = props => {
-	const { id } = props;
 
-	return (
-		<>
-			<h2>Single User</h2>
-			<ApolloConsumer>{client => readUserFragment(client)}</ApolloConsumer>
-		</>
-	);
+const SingleUser = props => {
+  const { id } = props;
+
+  return (
+    <>
+      <h2>Single User</h2>
+      <ApolloConsumer>{client => readUserFragment(client)}</ApolloConsumer>
+    </>
+  );
 };
 ```
 
 The user id is extracted from a URL param provided by Reach Router, and `<ApolloConsumer>` uses a render prop that passes in `client`. If this makes you a little uncomfortable (where is the client coming from?) you're not alone; just take it on faith that the consumer component allows automatic access to the client object. The next step is of course to write the `readUserFragment()` function:
 
 ```
+
 const readUserFragment = client => {
-	const data = client.readFragment({
-		id,
-		fragment: GET_SINGLE_USER_FRAGMENT,
-	});
+  const data = client.readFragment({
+    id,
+    fragment: GET_SINGLE_USER_FRAGMENT,
+  });
 
-	if (!data) {
-		return <h3>No data found in cache! Try visiting the home screen then returning here.</h3>
-	}
+  if (!data) {
+    return <h3>No data found in cache! Try visiting the home screen then returning here.</h3>
+  }
 
-	console.log(data);
+  console.log(data);
 
-	return <h3>Success!</h3>
+  return <h3>Success!</h3>
 };
 ```
 
@@ -468,86 +486,7 @@ This seems pretty simple, but there is quite a bit going on. It's kind of funky 
 
 Ok, here's the big chunk of code I warned you about. Don't be afraid, it's just some destructuring and JSX to get all the user's data to show up in a table. Replace `return <h3>Success!</h3>` like so:
 
-```
-const {
-	name,
-	username,
-	email,
-	address: {
-		street,
-		suite,
-		city,
-		zipcode,
-		geo: { lat, lng },
-	},
-	phone,
-	website,
-	company,
-	company: { catchPhrase, bs },
-} = data;
-
-return (
-	<>
-		<h3>{name}</h3>
-		<table>
-			<tbody>
-				<tr>
-					<td>Username</td>
-					<td>{username}</td>
-				</tr>
-				<tr>
-					<td>Email</td>
-					<td>
-						<a href={`mailto:${email}`}>{email}</a>
-					</td>
-				</tr>
-				<tr>
-					<td>Phone</td>
-					<td>{phone}</td>
-				</tr>
-				<tr>
-					<td>Address</td>
-					<td>
-						{street} {suite}
-						<br />
-						{city} {zipcode}
-					</td>
-				</tr>
-				<tr>
-					<td>Coordinates</td>
-					<td>
-						{lat}, {lng}
-					</td>
-				</tr>
-				<tr>
-					<td>Website</td>
-					<td>
-						<a href={`https://${website}`} target="_blank" rel="noopener noreferrer">
-							{website}
-						</a>
-					</td>
-				</tr>
-				<tr>
-					<td>Company Name</td>
-					<td>{company.name}</td>
-				</tr>
-				<tr>
-					<td>Company Catch Phrase</td>
-					<td>{catchPhrase}</td>
-				</tr>
-				<tr>
-					<td>Company BS</td>
-					<td>{bs}</td>
-				</tr>
-				<tr>
-					<td>User ID</td>
-					<td>{id}</td>
-				</tr>
-			</tbody>
-		</table>
-	</>
-);
-```
+https://gist.github.com/garethpbk/672cb0669d6f3fa131d14817541f72cc
 
 One quirk: the _name_ property of _company_ can't be destructured since there's already a _name_ property, so it has to be accessed on the _company_ object. Here's what our final `<SingleUser>` component looks like:
 
@@ -566,6 +505,7 @@ Before we proceed, another warning: there is _a lot_ of code involved here. Most
 With that out of the way, let's start by writing the mutation itself. Create _CREATE_USER_MUTATION.graphql_ in the **graphql** directory; it'll look very similar to the query from earlier:
 
 ```
+
 mutation CREATE_USER {
   createUser(input: $input) @rest(type: "User", path: "/users", method: "POST") {
     id
@@ -598,6 +538,7 @@ Two key differences/additions from query: `createUser` takes in a variable calle
 Unlike the query and fragment, the mutation will have its functionality split between _App.js_ and its own file. This isn't a rule, you could just as easily keep it all in its own file or spread it across two or more dedicated files. But here we'll stick with the `<App>` component, so open up _App.js_ and load these two files:
 
 ```
+
 const GET_ALL_USERS_QUERY = loader('../graphql/GET_ALL_USERS_QUERY.graphql');
 const CREATE_USER_MUTATION = loader('../graphql/CREATE_USER_MUTATION.graphql');
 ```
@@ -606,77 +547,24 @@ You'll need to `import { loader } from 'graphql.macro'` as well (by now you shou
 
 Here comes the ugly part. Let's add in local state and a change handler. As mentioned this is intentionally designed to mirror the API so that it doesn't have to be formatted later and can easily be spread right in to the mutation. Feel free to rip me one in the comments if you have a nicer way of handling this that preserves the nested state format.
 
-```
-state = {
-	name: '',
-	username: '',
-	email: '',
-	address: {
-		street: '',
-		suite: '',
-		city: '',
-		zipcode: '',
-		geo: {
-			lat: '',
-			lng: '',
-		},
-	},
-	phone: '',
-	website: '',
-	company: {
-		name: '',
-		catchPhrase: '',
-		bs: '',
-	},
-};
-
-handleChange = (e, nested = null, doubleNested = null) => {
-	const {
-		target: { name, value },
-	} = e;
-
-	if (doubleNested) {
-		const updateObj = { ...this.state[nested][doubleNested] };
-
-		updateObj[name] = value;
-
-		this.setState(prevState => ({
-			[nested]: {
-				...prevState[nested],
-				[doubleNested]: updateObj,
-			},
-		}));
-	} else if (nested && !doubleNested) {
-		const updateObj = { ...this.state[nested] };
-
-		updateObj[name] = value;
-
-		this.setState({
-			[nested]: updateObj,
-		});
-	} else {
-		this.setState({
-			[name]: value,
-		});
-	}
-};
-```
+https://gist.github.com/garethpbk/1dd9290026c5e1a6f31ec7163fdc86e7
 
 Next let's bring in the `<Mutation>` component. Import it from `react-apollo`, so that you've got `import { ApolloProvider, Mutation } from 'react-apollo'` in _App.js_. Underneath the `<Router>` component, in the div with a class of _AppContainer_, add another div to wrap some text and the `<Mutation>` component:
 
 ```
+
 <div>
-	<h2>Add a New User</h2>
-	<Mutation mutation={CREATE_USER_MUTATION}>
-		{createUser => (
-			<CreateUser
-				createUser={createUser}
-				createNewUser={this.createNewUser}
-				state={this.state}
-				handleChange={this.handleChange}
-			/>
-		)}
-	</Mutation>
+  <h2>Add a New User</h2>
+  <Mutation mutation={CREATE_USER_MUTATION}>
+    {createUser => (
+      <CreateUser
+        createUser={createUser}
+        createNewUser={this.createNewUser}
+        state={this.state}
+        handleChange={this.handleChange}
+      />
+    )}
+  </Mutation>
 </div>
 ```
 
@@ -684,47 +572,7 @@ Like `<Query>` and _query_, `<Mutation>` takes in a prop called _mutation_ into 
 
 `createUser` comes from the GraphQL mutation, but we need to write the `createNewUser()` function, in which the mutation request is actually sent. Under the `handleChange()` function set up `createNewUser()`:
 
-```
-createNewUser = async (e, action) => {
-    e.preventDefault();
-
-    const currentUsers = client.readQuery({ query: GET_ALL_USERS_QUERY });
-
-    const id = currentUsers.users.length + 1;
-
-    await action({
-      variables: {
-        input: {
-          id,
-          ...this.state,
-        },
-      },
-    });
-
-    this.setState({
-      name: '',
-      username: '',
-      email: '',
-      address: {
-        street: '',
-        suite: '',
-        city: '',
-        zipcode: '',
-        geo: {
-          lat: '',
-          lng: '',
-        },
-      },
-      phone: '',
-      website: '',
-      company: {
-        name: '',
-        catchPhrase: '',
-        bs: '',
-      },
-    });
-  };
-```
+https://gist.github.com/garethpbk/d15e6747acb263142a2fa4a89b027510
 
 Let's go over this: first we prevent the default form action, something you've probably seen many times before. We use the `readQuery()` method on the `client` object to take a peek at the array stored in the cache of all user data, and then get its length so that we can determine the proper id to assign to the new user (if your application uses something like MongoDB that automatically creates an id, this step isn't necessary) - this is the first time we need the all user query in the mutation. Now the meat: `action` refers to `createUser` that will be passed in from the `<CreateUser>` component's (which itself recieves `createUser` as a prop) we'll set up next. Recall how the GraphQL `createUser` mutation took in one variable, called _input_ - this is where it's set. We feed it an id and the entire value of current state, from which it will create a new user. Last we clear local state to blank the form.
 
@@ -732,131 +580,7 @@ Let's go over this: first we prevent the default form action, something you've p
 
 There is a lot going on here. It's ok to be confused, especially given that we're referring to things that we haven't written yet. Let's rectify that by creating _CreateUser.js_ in **components**, and taking a deep breath - we've got a lot of form JSX to write:
 
-```
-import React from 'react';
-
-const CreateUser = ({ createUser, createNewUser, state, handleChange }) => {
-	 const {
-    name,
-    username,
-    email,
-    address: {
-      street,
-      suite,
-      city,
-      zipcode,
-      geo: { lat, lng },
-    },
-    phone,
-    website,
-    company,
-    company: { catchPhrase, bs },
-  } = state;
-
-	return (
-    <form onSubmit={e => createNewUser(e, createUser)}>
-      <h3>User Info</h3>
-      <input type="text" name="name" placeholder="Name" value={name} required onChange={e => handleChange(e)} />
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={username}
-        required
-        onChange={e => handleChange(e)}
-      />
-      <input type="email" name="email" placeholder="Email" value={email} required onChange={e => handleChange(e)} />
-      <input type="tel" name="phone" placeholder="Phone" value={phone} required onChange={e => handleChange(e)} />
-      <input
-        type="text"
-        name="website"
-        placeholder="Website"
-        value={website}
-        required
-        onChange={e => handleChange(e)}
-      />
-      <h3>User Address</h3>
-      <input
-        type="text"
-        name="street"
-        placeholder="Street"
-        value={street}
-        required
-        onChange={e => handleChange(e, 'address')}
-      />
-      <input
-        type="text"
-        name="suite"
-        placeholder="Suite"
-        value={suite}
-        required
-        onChange={e => handleChange(e, 'address')}
-      />
-      <input
-        type="text"
-        name="city"
-        placeholder="City"
-        value={city}
-        required
-        onChange={e => handleChange(e, 'address')}
-      />
-      <input
-        type="text"
-        name="zipcode"
-        placeholder="Zip Code"
-        value={zipcode}
-        required
-        onChange={e => handleChange(e, 'address')}
-      />
-      <input
-        type="text"
-        name="lat"
-        placeholder="Latitude"
-        value={lat}
-        required
-        onChange={e => handleChange(e, 'address', 'geo')}
-      />
-      <input
-        type="text"
-        name="lng"
-        placeholder="Longitude"
-        value={lng}
-        required
-        onChange={e => handleChange(e, 'address', 'geo')}
-      />
-      <h3>User Company</h3>
-      <input
-        type="text"
-        name="name"
-        placeholder="Company Name"
-        value={company.name}
-        required
-        onChange={e => handleChange(e, 'company')}
-      />
-      <input
-        type="text"
-        name="catchPhrase"
-        placeholder="Company Catch Phrase"
-        value={catchPhrase}
-        required
-        onChange={e => handleChange(e, 'company')}
-      />
-      <input
-        type="text"
-        name="bs"
-        placeholder="Company BS"
-        value={bs}
-        required
-        onChange={e => handleChange(e, 'company')}
-      />
-
-      <button type="submit">Create New User (GraphQL)</button>
-    </form>
-  );
-}
-
-export default CreateUser;
-```
+https://gist.github.com/garethpbk/f890515713ce6b685467ec501fd75d96
 
 Once again all of this is agnostic to GraphQL and Apollo, it's just a form with controlled inputs. The form's `onSubmit` action is what's important: this calls `createNewUser()` that we just wrote, and provides it the event and `createUser` action. Give it a shot - fill out the form (every field is required) and click "Create New User (GraphQL)" and see what happens.
 
@@ -867,21 +591,22 @@ Once again all of this is agnostic to GraphQL and Apollo, it's just a form with 
 Check the root query object - it hasn't changed, no new user here. Only the individual user entry has been created. Try filling out the form with different values and sending it again - you'll see that a user with id 12 is not created, rather id 11 is re-written with the newer data. Thinking about how we assigned ids - by counting the length of the users object on the root query - this makes sense, as the root query isn't being updated. Lucky for us, the `<Mutation>` component accepts another prop called `update` that tells the client to update the root query when the mutation is successfuly submitted. Let's add it to `<Mutation>` in _App.js_:
 
 ```
+
 <Mutation
-	mutation={CREATE_USER_MUTATION}
-	update={(cache, { data: { createUser } }) => {
-		const { users } = cache.readQuery({ query: GET_ALL_USERS_QUERY });
-		cache.writeQuery({ query: GET_ALL_USERS_QUERY, data: { users: users.concat([createUser]) } });
-	}}
+  mutation={CREATE_USER_MUTATION}
+  update={(cache, { data: { createUser } }) => {
+    const { users } = cache.readQuery({ query: GET_ALL_USERS_QUERY });
+    cache.writeQuery({ query: GET_ALL_USERS_QUERY, data: { users: users.concat([createUser]) } });
+  }}
 >
-	{createUser => (
-		<CreateUser
-			createUser={createUser}
-			createNewUser={this.createNewUser}
-			state={this.state}
-			handleChange={this.handleChange}
-		/>
-	)}
+  {createUser => (
+    <CreateUser
+      createUser={createUser}
+      createNewUser={this.createNewUser}
+      state={this.state}
+      handleChange={this.handleChange}
+    />
+  )}
 </Mutation>
 ```
 
@@ -900,15 +625,16 @@ One more thing before we wrap up: Apollo is also good at handling POST requests 
 Add the `createViaFetch()` function above the return:
 
 ```
+
 const createViaFetch = async () => {
-	const newUserRequest = await fetch('https://jsonplaceholder.typicode.com/users', {
-		method: 'POST',
-		body: JSON.stringify(state),
-	});
+  const newUserRequest = await fetch('https://jsonplaceholder.typicode.com/users', {
+    method: 'POST',
+    body: JSON.stringify(state),
+  });
 
-	const response = await newUserRequest.json();
+  const response = await newUserRequest.json();
 
-	return response;
+  return response;
 };
 ```
 
