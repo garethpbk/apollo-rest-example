@@ -11,7 +11,7 @@ GraphQL is taking the web development world by storm, and along with it a whole 
 
 One of Apollo Client's links offers solutions to all four of the questions above: `apollo-link-rest`, which allows existing REST API endpoints to be communicated with via GraphQL. This means you can start using GraphQL on the front-end, through Apollo Client, without any need for a GraphQL server on the back-end or any need to modify the back-end at all. It's a great way to try GraphQL without getting overwhelmed and for front-end developers who want to see what all the fuss is about. Whether or not it's suitable for full-scale production applications will depend on the team and application - if you want to have a fully GraphQL-powered application, it's generally recommended to leverage GraphQL on both ends; in this situation, `apollo-link-rest` offers a useful intermediary that can help the transition from a traditional REST setup to a GraphQL one (e.g. a front-end team doesn't have to wait for a GraphQL back-end to be functional).
 
-Without further adue, let's take a dive into Apollo Client and see how `apollo-link-rest` can be used to manage data from a REST API in a React application. Our API will come from [JSONPlaceholder](https://jsonplaceholder.typicode.com/), which offers a mock REST API with everything you'd expect for a CRUD app, minus persistent storage. We'll use `create-react-app` to get our project up-and-running, and explore how Apollo Client works with React, as well as noting some issues with `apollo-link-rest` - as the project maintainers note, it's a library that's _under active development_.
+Without further ado, let's take a dive into Apollo Client and see how `apollo-link-rest` can be used to manage data from a REST API in a React application. Our API will come from [JSONPlaceholder](https://jsonplaceholder.typicode.com/), which offers a mock REST API with everything you'd expect for a CRUD app, minus persistent storage. We'll use `create-react-app` to get our project up-and-running, and explore how Apollo Client works with React, as well as noting some issues with `apollo-link-rest` - as the project maintainers note, it's a library that's _under active development_.
 
 The finished repo for this project can be found at [https://github.com/garethpbk/apollo-rest-example](https://github.com/garethpbk/apollo-rest-example).
 
@@ -47,7 +47,7 @@ Next, there's a few dependencies to add:
 
 6. `graphql-anywhere`
 
-   \*allows GraphQL queries to be run anywhere, without a server or schema
+   \*allows GraphQL operations to be run anywhere, without a server or schema
 
 7. `graphql.macro`
 
@@ -373,7 +373,7 @@ There's a second way to provide types using a `typePatcher` to the `RestLink` ob
 
 Check out the Apollo cache and see how each user entry now has _all_ of its data from the API. We're in position to start using fragments to render each user individually, along with all its data.
 
-First let's add a route with a parameter to accomodate individual user views:
+First let's add a route with a parameter to accommodate individual user views:
 
 ```
 <Router>
@@ -466,7 +466,7 @@ Let's break it down: `readUserFragment()` takes in one parameter, the client, an
 
 This seems pretty simple, but there is quite a bit going on. It's kind of funky that even though the only query to the remote API that's been run requested **all** of the user data in one call, each indivdual user's data are accessible this way. If you looked at the cache in dev tools earlier and saw how each user got its own entry, separate from all users on the root query object, you've seen how it works: the Apollo cache normalizes the queried data and automatically gives each entry its own object - very handy. The _dataIdFromObject_ that was set earlier comes into play too - we're using ES6 property value shorthand to access the user object via `id`; if _dataIdFromObject_ is not set then you'd have to do `` id: `User:${id}` `` to properly access the object. The ability to customize how your cache is set up is a very valuable tool.
 
-Ok, here's the big chunk of code I warned you about. Don't be afraid, it's just some destructuring and JSX to get all the user's data to show up in a table. Replace `return <h3>Success!</h3>` like so:
+Ok, here's the big chunk of code I warned you about. Don't be afraid, it's just some destructuring and JSX to get all the user's data to show up in a table. Replace `return <h3>Success!</h3>` with the following:
 
 ```
 const {
